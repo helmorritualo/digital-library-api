@@ -31,13 +31,13 @@ import {
 
 export const register = async (c: Context) => {
   try {
-    const { email, password, name } = await c.req.json();
+    const { email, password, name, contact_number, gender, address } = await c.req.json();
 
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
       throw new BadRequestError("User already exists");
     }
-    await createUser({ email, password, name });
+    await createUser({ email, password, name, contact_number, gender, address });
 
     const user = await findUserByEmail(email);
     if (!user) {

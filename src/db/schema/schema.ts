@@ -10,7 +10,7 @@ export const users = table(
   "users",
   {
     id: t.int("id").primaryKey().autoincrement(),
-    full_name: t.varchar("full_name", { length: 255 }).notNull(),
+    name: t.varchar("full_name", { length: 255 }).notNull(),
     email: t.varchar("email", { length: 255 }).notNull().unique(),
     password: t.varchar("password", { length: 255 }).notNull(),
     contact_number: t.varchar("contact_number", { length: 11 }).notNull(),

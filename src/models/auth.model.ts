@@ -6,13 +6,16 @@ import { users, refreshTokens } from "@/db/schema/schema";
 type User = typeof users.$inferInsert;
 
 export const createUser = async (userData: User) => {
-  const { email, password, name } = userData;
+  const { email, password, name, contact_number, gender, address } = userData;
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const newUser = {
     email,
     password: hashedPassword,
     name,
+    contact_number,
+    gender,
+    address,
   };
 
   const [user] = await db.insert(users).values(newUser);
@@ -32,13 +35,7 @@ export const findUserByEmail = async (email: string) => {
 
 export const findUserById = async (id: number) => {
   const [user] = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      isActive: users.isActive,
-      createdAt: users.createdAt,
-    })
+    .select()
     .from(users)
     .where(eq(users.id, id))
     .limit(1);
