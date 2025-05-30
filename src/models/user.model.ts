@@ -43,3 +43,11 @@ export const unarchieveUser = async (id: number) => {
 
   return activatedUser;
 };
+
+export const deleteUser = async (id: number) => {
+  const [deletedUser] = await db
+    .delete(users)
+    .where(eq(users.id, id));
+
+  return deletedUser;
+};
