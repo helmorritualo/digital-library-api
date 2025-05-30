@@ -16,7 +16,6 @@ const app = new Hono<{ Variables: JwtVariables }>();
 // Middlewares
 app.use("*", logger());
 app.use(secureHeaders());
-app.use("*", logger());
 app.use(
   "*",
   cors({
