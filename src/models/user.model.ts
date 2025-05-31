@@ -17,7 +17,6 @@ export const getAllUsers = async (): Promise<UserWithoutPassword[]> => {
 
 export const updateUser = async (id: number, userData: User) => {
   const { password, ...updateData } = userData;
-
   const [updatedUser] = await db
     .update(users)
     .set(updateData)
