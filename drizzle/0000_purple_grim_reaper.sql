@@ -1,13 +1,3 @@
-CREATE TABLE `authors` (
-	`id` int AUTO_INCREMENT NOT NULL,
-	`name` varchar(100) NOT NULL,
-	`bio` text NOT NULL,
-	`birth_date` date NOT NULL,
-	`created_at` timestamp NOT NULL DEFAULT (now()),
-	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	CONSTRAINT `authors_id` PRIMARY KEY(`id`)
-);
---> statement-breakpoint
 CREATE TABLE `bookmarks` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`user_id` int NOT NULL,
@@ -21,8 +11,8 @@ CREATE TABLE `books` (
 	`title` varchar(100) NOT NULL,
 	`description` text NOT NULL,
 	`file_path` varchar(255) NOT NULL,
-	`author_id` int,
-	`user_id` int NOT NULL,
+	`cover_path` varchar(255) NOT NULL,
+	`author_name` varchar(100) NOT NULL,
 	`category_id` int NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
@@ -89,21 +79,15 @@ CREATE TABLE `users` (
 --> statement-breakpoint
 ALTER TABLE `bookmarks` ADD CONSTRAINT `bookmarks_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `bookmarks` ADD CONSTRAINT `bookmarks_book_id_books_id_fk` FOREIGN KEY (`book_id`) REFERENCES `books`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `books` ADD CONSTRAINT `books_author_id_authors_id_fk` FOREIGN KEY (`author_id`) REFERENCES `authors`(`id`) ON DELETE set null ON UPDATE cascade;--> statement-breakpoint
-ALTER TABLE `books` ADD CONSTRAINT `books_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `books` ADD CONSTRAINT `books_category_id_categories_id_fk` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reading_sessions` ADD CONSTRAINT `reading_sessions_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reading_sessions` ADD CONSTRAINT `reading_sessions_book_id_books_id_fk` FOREIGN KEY (`book_id`) REFERENCES `books`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `refresh_tokens` ADD CONSTRAINT `refresh_tokens_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reviews` ADD CONSTRAINT `reviews_user_id_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reviews` ADD CONSTRAINT `reviews_book_id_books_id_fk` FOREIGN KEY (`book_id`) REFERENCES `books`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX `idx_authors_name` ON `authors` (`name`);--> statement-breakpoint
-CREATE INDEX `idx_authors_bio` ON `authors` (`bio`);--> statement-breakpoint
 CREATE INDEX `idx_bookmarks_user_id` ON `bookmarks` (`user_id`);--> statement-breakpoint
 CREATE INDEX `idx_bookmarks_book_id` ON `bookmarks` (`book_id`);--> statement-breakpoint
 CREATE INDEX `idx_books_title` ON `books` (`title`);--> statement-breakpoint
-CREATE INDEX `idx_books_author_id` ON `books` (`author_id`);--> statement-breakpoint
-CREATE INDEX `idx_books_user_id` ON `books` (`user_id`);--> statement-breakpoint
 CREATE INDEX `idx_books_category_id` ON `books` (`category_id`);--> statement-breakpoint
 CREATE INDEX `idx_categories_name` ON `categories` (`name`);--> statement-breakpoint
 CREATE INDEX `idx_reading_sessions_user_id` ON `reading_sessions` (`user_id`);--> statement-breakpoint

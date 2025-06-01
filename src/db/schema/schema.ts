@@ -49,22 +49,6 @@ export const refreshTokens = table(
   ]
 );
 
-export const authors = table(
-  "authors",
-  {
-    id: t.int("id").primaryKey().autoincrement(),
-    name: t.varchar("name", { length: 100 }).notNull(),
-    bio: t.text("bio").notNull(),
-    birth_date: t.date("birth_date").notNull(),
-    createdAt: t.timestamp("created_at").defaultNow().notNull(),
-    updatedAt: t.timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-  },
-  (table) => [
-    index("idx_authors_name").on(table.name),
-    index("idx_authors_bio").on(table.bio),
-  ]
-);
-
 export const categories = table(
   "categories",
   {
@@ -83,16 +67,8 @@ export const books = table(
     title: t.varchar("title", { length: 100 }).notNull(),
     description: t.text("description").notNull(),
     file_path: t.varchar("file_path", { length: 255 }).notNull(),
-    author_id: t
-      .int("author_id")
-      .references(() => authors.id, {
-        onDelete: "set null",
-        onUpdate: "cascade",
-      }),
-    user_id: t
-      .int("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    cover_path: t.varchar("cover_path", { length: 255 }).notNull(),
+    author_name: t.varchar("author_name", { length: 100 }).notNull(),
     category_id: t
       .int("category_id")
       .notNull()
@@ -102,8 +78,6 @@ export const books = table(
   },
   (table) => [
     index("idx_books_title").on(table.title),
-    index("idx_books_author_id").on(table.author_id),
-    index("idx_books_user_id").on(table.user_id),
     index("idx_books_category_id").on(table.category_id),
   ]
 );
@@ -199,23 +173,11 @@ export const refreshTokensRelations = relations(refreshTokens, ({ one }) => ({
   }),
 }));
 
-export const authorsRelations = relations(authors, ({ many }) => ({
-  books: many(books), // Books written by author
-}));
-
 export const categoriesRelations = relations(categories, ({ many }) => ({
   books: many(books), // Books in category
 }));
 
 export const booksRelations = relations(books, ({ one, many }) => ({
-  author: one(authors, {
-    fields: [books.author_id],
-    references: [authors.id],
-  }),
-  user: one(users, {
-    fields: [books.user_id],
-    references: [users.id],
-  }),
   category: one(categories, {
     fields: [books.category_id],
     references: [categories.id],

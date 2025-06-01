@@ -1,86 +1,9 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "6ea59697-ce24-498f-bde1-fe86c27a3eec",
+  "id": "c032b602-b345-464f-a10c-e809913eb181",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "authors": {
-      "name": "authors",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "bio": {
-          "name": "bio",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "birth_date": {
-          "name": "birth_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {
-        "idx_authors_name": {
-          "name": "idx_authors_name",
-          "columns": [
-            "name"
-          ],
-          "isUnique": false
-        },
-        "idx_authors_bio": {
-          "name": "idx_authors_bio",
-          "columns": [
-            "bio"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "authors_id": {
-          "name": "authors_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
     "bookmarks": {
       "name": "bookmarks",
       "columns": {
@@ -200,16 +123,16 @@
           "notNull": true,
           "autoincrement": false
         },
-        "author_id": {
-          "name": "author_id",
-          "type": "int",
+        "cover_path": {
+          "name": "cover_path",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "int",
+        "author_name": {
+          "name": "author_name",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -247,20 +170,6 @@
           ],
           "isUnique": false
         },
-        "idx_books_author_id": {
-          "name": "idx_books_author_id",
-          "columns": [
-            "author_id"
-          ],
-          "isUnique": false
-        },
-        "idx_books_user_id": {
-          "name": "idx_books_user_id",
-          "columns": [
-            "user_id"
-          ],
-          "isUnique": false
-        },
         "idx_books_category_id": {
           "name": "idx_books_category_id",
           "columns": [
@@ -270,32 +179,6 @@
         }
       },
       "foreignKeys": {
-        "books_author_id_authors_id_fk": {
-          "name": "books_author_id_authors_id_fk",
-          "tableFrom": "books",
-          "tableTo": "authors",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "cascade"
-        },
-        "books_user_id_users_id_fk": {
-          "name": "books_user_id_users_id_fk",
-          "tableFrom": "books",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
         "books_category_id_categories_id_fk": {
           "name": "books_category_id_categories_id_fk",
           "tableFrom": "books",
