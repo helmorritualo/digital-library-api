@@ -1,11 +1,11 @@
 import { db } from "@/config/database";
 import { books, categories } from "@/db/schema/schema";
-import { eq, desc } from "drizzle-orm";
+import { desc, eq, like, or, sql } from "drizzle-orm";
 
 type Book = typeof books.$inferInsert;
 
 export const getAllBooks = async () => {
-  const getAllBooks = await db.select({
+  const query = db.select({
     book_id: books.id,
     title: books.title,
     description: books.description,
@@ -18,13 +18,15 @@ export const getAllBooks = async () => {
     updated_at: books.updatedAt
   }).from(books)
   .leftJoin(categories, eq(books.id, categories.id))
-  .orderBy(desc(books.createdAt));
+  .orderBy(desc(books.createdAt)).prepare()
 
-  return getAllBooks;
+  const getAllBooks = await query.execute()
+
+  return getAllBooks
 };
 
 export const getBookById = async (id: number) => {
-  const [getBook] = await db.select({
+  const query = db.select({
     book_id: books.id,
     title: books.title,
     description: books.description,
@@ -37,25 +39,61 @@ export const getBookById = async (id: number) => {
     updated_at: books.updatedAt
   }).from(books)
   .leftJoin(categories, eq(books.id, categories.id))
-  .where(eq(books.id, id));
+  .where(eq(books.id, sql.placeholder('id'))).prepare()
 
-  return getBook;
+  const [getBook] = await query.execute({ id })
+
+  return getBook
+};
+
+export const seachBooks = async (search: string) => {
+  const query = db.select({
+    book_id: books.id,
+    title: books.title,
+    description: books.description,
+    file_path: books.file_path,
+    cover_path: books.cover_path,
+    author_name: books.author_name,
+    category_id: categories.id,
+    category_name: categories.name,
+    created_at: books.createdAt,
+    updated_at: books.updatedAt
+  }).from(books)
+  .leftJoin(categories, eq(books.category_id, categories.id))
+  .where(
+    or(
+      like(books.title, sql.placeholder('search')),
+      like(books.author_name, sql.placeholder('search')),
+      like(books.description, sql.placeholder('search'))
+    )
+  )
+  .orderBy(desc(books.createdAt)).prepare()
+
+  const searchBooks = await query.execute({ search })
+
+  return searchBooks
 };
 
 export const createBook = async (bookData: Book) => {
-  const [book] = await db.insert(books).values(bookData);
+  const query =  db.insert(books).values(bookData).prepare()
 
-  return book;
+  const book = await query.execute()
+
+  return book
 };
 
 export const updateBook =  async (id: number, bookData: Book) => {
-  const [book] = await db.update(books).set(bookData).where(eq(books.id, id));
+  const query = db.update(books).set(bookData).where(eq(books.id, sql.placeholder('id'))).prepare()
 
-  return book;
+  const book = await query.execute({ id })
+
+  return book
 };
 
 export const deleteBooks = async (id: number) => {
-  const [book] = await db.delete(books).where(eq(books.id, id));
+  const query = db.delete(books).where(eq(books.id, id)).prepare()
 
-  return book;
+  const book = await query.execute({ id })
+
+  return book
 };

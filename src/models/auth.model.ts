@@ -18,9 +18,9 @@ export const createUser = async (userData: User) => {
     address,
   };
 
-  const [user] = await db.insert(users).values(newUser);
+  const query = db.insert(users).values(newUser).prepare()
 
-  return user;
+  const user = await query.execute()
 };
 
 export const findUserByEmail = async (email: string) => {
