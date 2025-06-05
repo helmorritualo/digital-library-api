@@ -1,13 +1,13 @@
-import { eq, and, lt, count, gt, desc } from "drizzle-orm";
+import { db } from "@/config/database";
+import { refreshTokens, users } from "@/db/schema/schema";
 import bcrypt from "bcrypt";
-import { db } from "@/config/database.js";
-import { users, refreshTokens } from "@/db/schema/schema";
+import { and, count, desc, eq, gt, lt, sql } from "drizzle-orm";
 
-type User = typeof users.$inferInsert;
+type User = typeof users.$inferInsert
 
 export const createUser = async (userData: User) => {
-  const { email, password, name, contact_number, gender, address } = userData;
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const { email, password, name, contact_number, gender, address } = userData
+  const hashedPassword = await bcrypt.hash(password, 12)
 
   const newUser = {
     email,
@@ -16,37 +16,34 @@ export const createUser = async (userData: User) => {
     contact_number,
     gender,
     address,
-  };
+  }
 
   const query = db.insert(users).values(newUser).prepare()
 
   const user = await query.execute()
+
+  return user
 };
 
 export const findUserByEmail = async (email: string) => {
-  const [user] = await db
+  const query = db
     .select()
     .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+    .where(eq(users.email, sql.placeholder("email")))
+    .limit(1)
+    .prepare();
+  const [findUserByEmail] = await query.execute({ email })
 
-  return user;
+  return findUserByEmail
 };
 
 export const findUserById = async (id: number) => {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1);
+  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
 
   return user;
 };
 
-export const validatePassword = async (
-  plainPassword: string,
-  hashedPassword: string
-) => {
+export const validatePassword = async (plainPassword: string, hashedPassword: string) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
@@ -65,26 +62,18 @@ export const findRefreshToken = async (token: any) => {
   const [refreshToken] = await db
     .select()
     .from(refreshTokens)
-    .where(
-      and(eq(refreshTokens.token, token), eq(refreshTokens.isRevoked, false))
-    )
+    .where(and(eq(refreshTokens.token, token), eq(refreshTokens.isRevoked, false)))
     .limit(1);
 
   return refreshToken;
 };
 
 export const revokeRefreshToken = async (token: any) => {
-  await db
-    .update(refreshTokens)
-    .set({ isRevoked: true })
-    .where(eq(refreshTokens.token, token));
+  await db.update(refreshTokens).set({ isRevoked: true }).where(eq(refreshTokens.token, token));
 };
 
 export const revokeAllUserRefreshTokens = async (userId: number) => {
-  await db
-    .update(refreshTokens)
-    .set({ isRevoked: true })
-    .where(eq(refreshTokens.userId, userId));
+  await db.update(refreshTokens).set({ isRevoked: true }).where(eq(refreshTokens.userId, userId));
 };
 
 export const getUserRefreshToken = async (userId: number) => {
@@ -108,18 +97,14 @@ export const deleteExpiredRefreshToken = async (userId: number) => {
   const now = new Date();
   await db
     .delete(refreshTokens)
-    .where(
-      and(eq(refreshTokens.userId, userId), lt(refreshTokens.expiresAt, now))
-    );
+    .where(and(eq(refreshTokens.userId, userId), lt(refreshTokens.expiresAt, now)));
 };
 
 export const getActiveRefreshTokensCount = async (userId: number) => {
   const result = await db
     .select({ count: count() })
     .from(refreshTokens)
-    .where(
-      and(eq(refreshTokens.userId, userId), eq(refreshTokens.isRevoked, false))
-    );
+    .where(and(eq(refreshTokens.userId, userId), eq(refreshTokens.isRevoked, false)));
 
   return result[0]?.count || 0;
 };
@@ -128,9 +113,7 @@ export const getActiveRefreshTokensByUser = async (userId: number) => {
   return await db
     .select()
     .from(refreshTokens)
-    .where(
-      and(eq(refreshTokens.userId, userId), eq(refreshTokens.isRevoked, false))
-    );
+    .where(and(eq(refreshTokens.userId, userId), eq(refreshTokens.isRevoked, false)));
 };
 
 export const cleanupExpiredTokens = async () => {
