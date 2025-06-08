@@ -1,8 +1,8 @@
-import { Context, Next } from "hono";
-import { verifyAccessToken } from "@/utils/jwt";
-import { getAccessTokenFromCookie } from "@/utils/cookies";
 import { findUserById } from "@/models/auth.model";
-import { NotFoundError, ForbiddenError, InternalServerError } from "@/utils/custom-error";
+import { getAccessTokenFromCookie } from "@/utils/cookies";
+import { ForbiddenError, NotFoundError } from "@/utils/custom-error";
+import { verifyAccessToken } from "@/utils/jwt";
+import { Context, Next } from "hono";
 
 export const authMiddleware = async (c: Context, next: Next) => {
   try {
@@ -20,20 +20,41 @@ export const authMiddleware = async (c: Context, next: Next) => {
       throw new ForbiddenError("Invalid access token");
     }
 
-    // Check if user still exists or is active
     const user = await findUserById(payload.userId as number);
-    if (!user || !user.isActive) {
-      throw new NotFoundError("User not found or inactive");
+    if (!user) {
+      throw new NotFoundError("User not found");
     }
 
-    // Set user info in context for use in controllers
-    c.set("userId", user.id);
+    c.set("user_id", user.id);
 
     await next();
   } catch (error) {
-     if (error instanceof NotFoundError || error instanceof ForbiddenError) {
-       throw error;
-     }
-     throw new InternalServerError("Authentication failed");
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    }
+  }
+};
+
+export const requireAdmin = async (c: Context, next: Next) => {
+  try {
+    const userId = c.get("user_id");
+    if (!userId) {
+      throw new ForbiddenError("Authentication required");
+    }
+
+    const user = await findUserById(userId);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (user.role !== "admin") {
+      throw new ForbiddenError("Admin access required");
+    }
+
+    await next();
+  } catch (error) {
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    }
   }
 };

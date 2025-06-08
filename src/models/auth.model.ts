@@ -3,11 +3,11 @@ import { refreshTokens, users } from "@/db/schema/schema";
 import bcrypt from "bcrypt";
 import { and, count, desc, eq, gt, lt, sql } from "drizzle-orm";
 
-type User = typeof users.$inferInsert
+type User = typeof users.$inferInsert;
 
 export const createUser = async (userData: User) => {
-  const { email, password, name, contact_number, gender, address } = userData
-  const hashedPassword = await bcrypt.hash(password, 12)
+  const { email, password, name, contact_number, gender, address } = userData;
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   const newUser = {
     email,
@@ -16,13 +16,13 @@ export const createUser = async (userData: User) => {
     contact_number,
     gender,
     address,
-  }
+  };
 
-  const query = db.insert(users).values(newUser).prepare()
+  const query = db.insert(users).values(newUser).prepare();
 
-  const user = await query.execute()
+  const user = await query.execute();
 
-  return user
+  return user;
 };
 
 export const findUserByEmail = async (email: string) => {
@@ -32,13 +32,19 @@ export const findUserByEmail = async (email: string) => {
     .where(eq(users.email, sql.placeholder("email")))
     .limit(1)
     .prepare();
-  const [findUserByEmail] = await query.execute({ email })
+  const [findUserByEmail] = await query.execute({ email });
 
-  return findUserByEmail
+  return findUserByEmail;
 };
 
 export const findUserById = async (id: number) => {
-  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  const query = db
+    .select()
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+
+  const [user] = await query.execute({ id });
 
   return user;
 };

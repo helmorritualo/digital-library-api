@@ -24,6 +24,21 @@ export const getAllUserService = async () => {
   }
 };
 
+export const getUserProfileService = async (id: number) => {
+  try {
+    const user = await findUserById(id);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    return user;
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      throw error;
+    }
+  }
+};
+
 export const updateUserService = async (id: number, userData: User) => {
   try {
     const user = await findUserById(id);
@@ -64,7 +79,7 @@ export const archiveUserService = async (id: number) => {
   }
 };
 
-export const UnarchiveUserService = async (id: number) => {
+export const unarchiveUserService = async (id: number) => {
   try {
     const user = await findUserById(id);
     if (!user) {
