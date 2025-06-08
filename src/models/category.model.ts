@@ -2,13 +2,17 @@ import { db } from "@/config/database";
 import { books, categories } from "@/db/schema/schema";
 import { desc, eq, like, sql } from "drizzle-orm";
 
-type Category = typeof categories.$inferInsert;
+export type Category = typeof categories.$inferInsert;
 
 export const getAllCategories = async () => {
-  const query = db.select({
-    category_id: categories.id,
-    category_name: categories.name,
-  }).from(categories).orderBy(desc(categories.createdAt)).prepare();
+  const query = db
+    .select({
+      category_id: categories.id,
+      category_name: categories.name,
+    })
+    .from(categories)
+    .orderBy(desc(categories.createdAt))
+    .prepare();
 
   const getAllCategories = await query.execute();
 
@@ -53,6 +57,13 @@ export const getBooksByCategory = async (categoryName: string) => {
   const getBooksByCategory = await query.execute({ categoryName });
 
   return getBooksByCategory;
+};
+
+export const createCategory = async (categoryData: Category) => {
+  const query = db.insert(categories).values(categoryData).prepare();
+  const createCategory = await query.execute();
+
+  return createCategory;
 };
 
 export const updateCategory = async (id: number, categoryData: Category) => {
