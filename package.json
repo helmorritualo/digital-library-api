@@ -1,5 +1,6 @@
 {
-  "name": "my-hono-drizzle-template",
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "digital-library",
   "type": "module",
   "version": "1.0.0",
   "scripts": {

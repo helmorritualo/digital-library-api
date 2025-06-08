@@ -1,15 +1,15 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import type { JwtVariables } from "hono/jwt";
+import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
-import { errorHandlerMiddleware } from "./middlewares/error-handler";
-import { routes } from "./controllers/routes";
-import { PORT } from "./config/env";
 import { databaseConnection } from "./config/database";
+import { PORT } from "./config/env";
+import { routes } from "./controllers/routes";
 import cleanExpiredToken from "./jobs/clean-expired-tokens";
+import { errorHandlerMiddleware } from "./middlewares/error-handler";
 
 const app = new Hono<{ Variables: JwtVariables }>();
 

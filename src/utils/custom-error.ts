@@ -1,10 +1,5 @@
 import { StatusCodes } from "http-status-codes";
 
-/**
- * Add more custom error classes as needed to represent different error scenarios.
- * These classes can be used to represent specific reponse error types in your API.
- */
-
 export class BadRequestError extends Error {
   constructor(message: string) {
     super(message);

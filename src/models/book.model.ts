@@ -2,7 +2,7 @@ import { db } from "@/config/database";
 import { books, categories } from "@/db/schema/schema";
 import { desc, eq, like, or, sql } from "drizzle-orm";
 
-type Book = typeof books.$inferInsert;
+export type Book = typeof books.$inferInsert;
 
 export const getAllBooks = async () => {
   const query = db
@@ -104,7 +104,7 @@ export const updateBook = async (id: number, bookData: Book) => {
   return book;
 };
 
-export const deleteBooks = async (id: number) => {
+export const deleteBook = async (id: number) => {
   const query = db.delete(books).where(eq(books.id, id)).prepare();
 
   const book = await query.execute({ id });
