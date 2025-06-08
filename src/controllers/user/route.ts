@@ -5,12 +5,8 @@ import userSchema from "@/validations/user.schema";
 import { validateJson } from "@/middlewares/global-validator";
 
 const userRouter = new Hono();
-
-// public routes
 userRouter.get("/profile/me", authMiddleware, getUserProfile);
 userRouter.put("/profile/me", authMiddleware, validateJson(userSchema), updateUser);
-
-// private | admin routes
 userRouter.get("/users", authMiddleware, requireAdmin, getAllUsers);
 userRouter.patch("/user/:id", authMiddleware, requireAdmin, deleteUser);
 userRouter.patch("/users/:id/archieve", authMiddleware, requireAdmin, archiveUser);
