@@ -67,7 +67,7 @@ export const createBookService = async (bookData: Book) => {
   }
 };
 
-export const updateBookService = async (id: number, updateData: Book) => {
+export const updateBookService = async (id: number, updateData: Partial <Book>) => {
   try {
     const book = await getBookById(id);
     if (!book) {

@@ -92,10 +92,14 @@ export const createBook = async (bookData: Book) => {
   return book;
 };
 
-export const updateBook = async (id: number, bookData: Book) => {
+export const updateBook = async (id: number, bookData: Partial<Book>) => {
+  const fieldsToUpdate = Object.fromEntries(
+    Object.entries(bookData).filter(([_, value]) => value !== undefined)
+  );
+
   const query = db
     .update(books)
-    .set(bookData)
+    .set(fieldsToUpdate)
     .where(eq(books.id, sql.placeholder("id")))
     .prepare();
 
