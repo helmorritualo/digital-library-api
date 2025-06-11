@@ -34,12 +34,11 @@ routes.forEach((route) => {
   app.route("/api/v1/", route);
 });
 
-serve({ fetch: app.fetch, port: Number(PORT) || 3000 }, async (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`);
+databaseConnection().then(() => {
+  serve({ fetch: app.fetch, port: Number(PORT) || 3000 }, async (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`);
 
-  // Database connection
-  await databaseConnection();
-
-  // Start the job to clean expired tokens
-  await cleanExpiredToken();
+    // Start the job to clean expired tokens
+    await cleanExpiredToken();
+  });
 });
