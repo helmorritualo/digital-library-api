@@ -39,7 +39,7 @@ export const getBooksByCategoryService = async (categoryName: string) => {
   }
 };
 
-export const getBookByIdService = async (id: number) => {
+export const getCategoryByIdService = async (id: number) => {
   try {
     const book = await getCategoryById(id);
     if (!book) {
